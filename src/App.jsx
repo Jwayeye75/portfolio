@@ -170,12 +170,11 @@ const css = `
   .projects-inner { max-width:1100px; margin:0 auto; }
   .sec-header { margin-bottom:56px; }
   .projects-list { display:flex; flex-direction:column; gap:1px; border:1px solid var(--border); border-radius:8px; overflow:hidden; }
-  .project-row { display:grid; grid-template-columns:auto 1fr auto; gap:32px; align-items:center; padding:28px 32px; background:var(--surface); transition:all 0.3s; cursor:pointer; border-bottom:1px solid var(--border); }
+  .project-row { display:grid; grid-template-columns:auto 1fr auto; gap:32px; align-items:center; padding:28px 32px; background:var(--surface); transition:all 0.3s; cursor:pointer; border-bottom:1px solid var(--border); position:relative; }
   .project-row:last-child { border-bottom:none; }
-  .project-row:hover { background:rgba(0,229,255,0.03); }
+  .project-row:hover { background:rgba(0,229,255,0.04); transform:translateX(4px); }
   .project-row:hover .pr-arrow { color:var(--green); transform:translate(4px,-4px); }
   .pr-num { font-family:'DM Mono',monospace; font-size:12px; color:var(--muted); letter-spacing:1px; min-width:36px; }
-  .pr-info { }
   .pr-title { font-size:18px; font-weight:700; letter-spacing:-0.5px; margin-bottom:6px; color:var(--text); }
   .pr-desc { font-size:13px; color:var(--muted2); line-height:1.6; margin-bottom:10px; }
   .pr-stack { display:flex; gap:8px; flex-wrap:wrap; }
@@ -185,6 +184,58 @@ const css = `
   .pr-links { display:flex; gap:10px; }
   .pr-link { font-family:'DM Mono',monospace; font-size:11px; color:var(--muted2); text-decoration:none; transition:color 0.2s; letter-spacing:1px; border:1px solid var(--border); padding:4px 12px; border-radius:20px; }
   .pr-link:hover { color:var(--green); border-color:var(--green); }
+  .pr-preview-btn { font-family:'DM Mono',monospace; font-size:11px; color:var(--green); background:rgba(0,229,255,0.08); border:1px solid rgba(0,229,255,0.25); padding:5px 14px; border-radius:20px; cursor:pointer; letter-spacing:1px; transition:all 0.2s; }
+  .pr-preview-btn:hover { background:rgba(0,229,255,0.15); box-shadow:0 0 14px rgba(0,229,255,0.2); }
+
+  /* LIVE PREVIEW MODAL */
+  .preview-overlay { position:fixed; inset:0; z-index:999; background:rgba(0,0,0,0.88); backdrop-filter:blur(16px); display:flex; align-items:center; justify-content:center; animation:fadeIn 0.2s ease; padding:20px; }
+  .preview-box { width:100%; max-width:1100px; height:85vh; background:var(--dark2); border-radius:12px; overflow:hidden; border:1px solid rgba(0,229,255,0.2); box-shadow:0 0 60px rgba(0,229,255,0.08), 0 40px 80px rgba(0,0,0,0.6); animation:previewIn 0.35s cubic-bezier(0.22,1,0.36,1); display:flex; flex-direction:column; }
+  @keyframes previewIn { from { opacity:0; transform:scale(0.92) translateY(20px); } to { opacity:1; transform:scale(1) translateY(0); } }
+  .preview-bar { display:flex; align-items:center; justify-content:space-between; padding:12px 18px; background:var(--surface); border-bottom:1px solid var(--border); flex-shrink:0; }
+  .preview-bar-left { display:flex; align-items:center; gap:12px; }
+  .preview-dots { display:flex; gap:6px; }
+  .preview-dot { width:12px; height:12px; border-radius:50%; }
+  .pd-red { background:#ef4444; }
+  .pd-yellow { background:#f59e0b; }
+  .pd-green { background:#22c55e; }
+  .preview-url { font-family:'DM Mono',monospace; font-size:11px; color:var(--muted2); background:rgba(255,255,255,0.04); border:1px solid var(--border); padding:5px 16px; border-radius:20px; letter-spacing:0.5px; }
+  .preview-title { font-family:'DM Mono',monospace; font-size:12px; color:var(--green); letter-spacing:1px; }
+  .preview-close { width:28px; height:28px; border-radius:6px; background:rgba(255,255,255,0.06); border:1px solid var(--border); color:var(--muted2); cursor:pointer; font-size:14px; display:flex; align-items:center; justify-content:center; transition:all 0.2s; }
+  .preview-close:hover { background:rgba(239,68,68,0.2); color:#ef4444; border-color:#ef4444; }
+  .preview-frame { flex:1; position:relative; background:#000; }
+  .preview-frame iframe { width:100%; height:100%; border:none; display:block; }
+  .preview-no-live { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; color:var(--muted); }
+  .preview-no-live span { font-size:2.5rem; }
+  .preview-no-live p { font-family:'DM Mono',monospace; font-size:12px; letter-spacing:1px; }
+  .preview-actions { display:flex; gap:10px; padding:10px 18px; background:var(--surface); border-top:1px solid var(--border); flex-shrink:0; justify-content:flex-end; }
+  .preview-action-btn { font-family:'DM Mono',monospace; font-size:11px; letter-spacing:1px; padding:7px 18px; border-radius:20px; cursor:pointer; transition:all 0.2s; text-decoration:none; display:inline-flex; align-items:center; gap:6px; }
+  .pab-outline { color:var(--muted2); border:1px solid var(--border); background:transparent; }
+  .pab-outline:hover { color:var(--green); border-color:var(--green); }
+  .pab-filled { color:var(--dark); border:1px solid var(--green); background:var(--green); font-weight:700; }
+  .pab-filled:hover { box-shadow:0 0 20px rgba(0,229,255,0.3); transform:translateY(-1px); }
+
+  /* MOTIVATIONAL BANNER */
+  .motiv-banner { padding:60px 72px; background:var(--dark); border-top:1px solid var(--border); position:relative; overflow:hidden; }
+  .motiv-banner::before { content:''; position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,var(--green),transparent); }
+  .motiv-banner::after { content:''; position:absolute; bottom:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,rgba(0,229,255,0.3),transparent); }
+  .motiv-inner { max-width:1100px; margin:0 auto; display:grid; grid-template-columns:repeat(3,1fr); gap:32px; }
+  .motiv-card { padding:28px; border:1px solid var(--border); border-radius:8px; background:var(--surface); transition:all 0.3s; position:relative; overflow:hidden; }
+  .motiv-card::before { content:''; position:absolute; inset:0; background:linear-gradient(135deg,rgba(0,229,255,0.03),transparent); opacity:0; transition:opacity 0.3s; }
+  .motiv-card:hover { border-color:rgba(0,229,255,0.3); transform:translateY(-4px); box-shadow:0 12px 40px rgba(0,0,0,0.3); }
+  .motiv-card:hover::before { opacity:1; }
+  .motiv-icon { font-size:1.6rem; margin-bottom:14px; display:block; }
+  .motiv-quote { font-size:14px; font-weight:600; color:var(--text); line-height:1.6; margin-bottom:10px; font-style:italic; }
+  .motiv-quote::before { content:'"'; color:var(--green); font-size:1.4rem; line-height:0; vertical-align:-6px; margin-right:3px; }
+  .motiv-quote::after { content:'"'; color:var(--green); font-size:1.4rem; line-height:0; vertical-align:-6px; margin-left:3px; }
+  .motiv-author { font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); letter-spacing:2px; text-transform:uppercase; }
+  .motiv-header { text-align:center; margin-bottom:44px; }
+  .motiv-glow { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:500px; height:200px; background:radial-gradient(ellipse,rgba(0,229,255,0.03) 0%,transparent 70%); pointer-events:none; }
+
+  @media (max-width:900px) {
+    .motiv-inner { grid-template-columns:1fr; }
+    .motiv-banner { padding:60px 24px; }
+    .preview-box { height:75vh; }
+  }
 
   /* ── CONTACT ── */
   .contact-section { padding:120px 72px; background:var(--dark); border-top:1px solid var(--border); text-align:center; position:relative; overflow:hidden; }
@@ -249,10 +300,11 @@ const PROJECTS = [
     github: "https://github.com/jwayeye75/gameforge",
   },
   {
-    id: "02", title: "Coming Soon",
-    desc: "Next project currently in development. Something exciting is coming — stay tuned.",
-    stack: ["React", "TBD"],
-    live: null, github: null,
+    id: "02", title: "Apex Cinema",
+    desc: "A full-stack IMDb-style movie & series platform. Browse millions of titles via the TMDB API, watch trailers, save to a personal watchlist, and leave ratings & reviews. Features real user authentication and a live database powered by Supabase with Row Level Security.",
+    stack: ["React", "Vite", "TMDB API", "Supabase", "PostgreSQL", "Vercel"],
+    live: "https://my-movie-cave.vercel.app",
+    github: "https://github.com/jwayeye75/my-movie-cave",
   },
   {
     id: "03", title: "More Projects",
@@ -318,6 +370,7 @@ function TechOrb() {
 export default function Portfolio() {
   const [skillsVisible, setSkillsVisible] = useState(false);
   const [activeNav, setActiveNav] = useState("home");
+  const [preview, setPreview] = useState(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
@@ -450,7 +503,7 @@ export default function Portfolio() {
           </div>
           <div className="projects-list fade-in">
             {PROJECTS.map((p, i) => (
-              <div key={p.id} className="project-row" style={{ transitionDelay: `${i * 0.1}s` }}>
+              <div key={p.id} className="project-row" style={{ transitionDelay: `${i * 0.1}s` }} onClick={() => p.live && setPreview(p)}>
                 <div className="pr-num">{p.id}</div>
                 <div className="pr-info">
                   <div className="pr-title">{p.title}</div>
@@ -460,10 +513,38 @@ export default function Portfolio() {
                 <div className="pr-right">
                   <div className="pr-arrow">↗</div>
                   <div className="pr-links">
-                    {p.live && <a href={p.live} target="_blank" rel="noreferrer" className="pr-link">Live</a>}
-                    {p.github && <a href={p.github} target="_blank" rel="noreferrer" className="pr-link">GitHub</a>}
+                    {p.live && <button className="pr-preview-btn" onClick={e => { e.stopPropagation(); setPreview(p); }}>⚡ Preview</button>}
+                    {p.live && <a href={p.live} target="_blank" rel="noreferrer" className="pr-link" onClick={e => e.stopPropagation()}>Live</a>}
+                    {p.github && <a href={p.github} target="_blank" rel="noreferrer" className="pr-link" onClick={e => e.stopPropagation()}>GitHub</a>}
                   </div>
                 </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* MOTIVATIONAL SECTION */}
+      <section className="motiv-banner">
+        <div className="motiv-glow" />
+        <div style={{ maxWidth: "1100px", margin: "0 auto" }}>
+          <div className="motiv-header fade-in">
+            <div className="sec-eyebrow" style={{ marginBottom: 10 }}>Mindset</div>
+            <h2 className="sec-title" style={{ fontSize: "clamp(28px,3vw,38px)" }}>What Drives Me</h2>
+          </div>
+          <div className="motiv-inner fade-in">
+            {[
+              { icon: "🚀", quote: "The best way to predict the future is to build it.", author: "Alan Kay" },
+              { icon: "💡", quote: "Every expert was once a beginner. Every pro was once an amateur. Keep going.", author: "Robin Sharma" },
+              { icon: "🔥", quote: "Code is like humor. When you have to explain it, it's bad — so I write code that speaks for itself.", author: "Josiah Ayeye" },
+              { icon: "🎯", quote: "Don't watch the clock; do what it does — keep going.", author: "Sam Levenson" },
+              { icon: "⚡", quote: "First, solve the problem. Then, write the code.", author: "John Johnson" },
+              { icon: "🌍", quote: "From Nigeria to the world — one line of code at a time.", author: "Josiah Ayeye" },
+            ].map((m, i) => (
+              <div key={i} className="motiv-card" style={{ animationDelay: `${i * 0.1}s` }}>
+                <span className="motiv-icon">{m.icon}</span>
+                <div className="motiv-quote">{m.quote}</div>
+                <div className="motiv-author">— {m.author}</div>
               </div>
             ))}
           </div>
@@ -488,13 +569,39 @@ export default function Portfolio() {
 
       {/* FOOTER */}
       <footer className="footer">
-        <div className="footer-text">Built by <span>Josiah Haruna Ayeye</span> · 2025</div>
+        <div className="footer-text">Built by <span>Josiah Haruna Ayeye</span> · 2026</div>
         <div className="footer-links">
           <a href="mailto:josiahharunaayeye@gmail.com" className="footer-link">Email</a>
           <a href="https://www.linkedin.com/in/josiah-haruna-ayeye-4a46563b5" target="_blank" rel="noreferrer" className="footer-link">LinkedIn</a>
           <a href="https://github.com/jwayeye75" target="_blank" rel="noreferrer" className="footer-link">GitHub</a>
         </div>
       </footer>
+      {/* LIVE PREVIEW MODAL */}
+      {preview && (
+        <div className="preview-overlay" onClick={() => setPreview(null)}>
+          <div className="preview-box" onClick={e => e.stopPropagation()}>
+            <div className="preview-bar">
+              <div className="preview-bar-left">
+                <div className="preview-dots">
+                  <div className="preview-dot pd-red" />
+                  <div className="preview-dot pd-yellow" />
+                  <div className="preview-dot pd-green" />
+                </div>
+                <div className="preview-url">{preview.live}</div>
+              </div>
+              <div className="preview-title">{preview.title}</div>
+              <button className="preview-close" onClick={() => setPreview(null)}>✕</button>
+            </div>
+            <div className="preview-frame">
+              <iframe src={preview.live} title={preview.title} sandbox="allow-scripts allow-same-origin allow-forms allow-popups" />
+            </div>
+            <div className="preview-actions">
+              <a href={preview.github} target="_blank" rel="noreferrer" className="preview-action-btn pab-outline">GitHub ↗</a>
+              <a href={preview.live} target="_blank" rel="noreferrer" className="preview-action-btn pab-filled">Open Full Site ↗</a>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
